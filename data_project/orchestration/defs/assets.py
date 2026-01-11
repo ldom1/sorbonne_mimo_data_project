@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import dagster as dg
 
 from data_project.api.get_data import get_data
@@ -147,6 +149,35 @@ def dg_process_jointure(
     )
 
 
+@dg.asset_check(
+    asset=dg_process_jointure,
+    description="Check that the data has been properly written to the gold layer",
+)
+def dg_check_jointure(context: dg.AssetCheckExecutionContext) -> dg.AssetCheckResult:
+    context.log.info(
+        "Checking that the data has been properly written to the gold layer..."
+    )
+    try:
+        if not Path(DATA_GOLD).exists():
+            return dg.AssetCheckResult(
+                passed=False,
+                description="Data has not been properly written to the gold layer",
+            )
+        else:
+            return dg.AssetCheckResult(
+                passed=True,
+                description="Data has been properly written to the gold layer",
+            )
+    except Exception as e:
+        context.log.error(
+            f"Error checking that the data has been properly written to the gold layer: {e}"
+        )
+        return dg.AssetCheckResult(
+            passed=False,
+            description=f"Error checking that the data has been properly written to the gold layer: {e}",
+        )
+
+
 @dg.asset(description="Génération de la carte des accidents parisiens")
 def dg_generate_analytics(
     context: dg.AssetExecutionContext, dg_process_jointure: dg.MaterializeResult
@@ -160,3 +191,30 @@ def dg_generate_analytics(
         raise e
     context.log.info(f"Paris accidents map generated and saved to {PARIS_MAP_PATH}.")
     return dg.MaterializeResult(metadata={"map_path": str(PARIS_MAP_PATH)})
+
+
+@dg.asset_check(
+    asset=dg_generate_analytics,
+    description="Check that the map has been properly generated",
+)
+def dg_check_generate_analytics(
+    context: dg.AssetCheckExecutionContext,
+) -> dg.AssetCheckResult:
+    context.log.info("Checking that the map has been properly generated...")
+    try:
+        if not Path(PARIS_MAP_PATH).exists():
+            return dg.AssetCheckResult(
+                passed=False, description="Map has not been properly generated"
+            )
+        else:
+            return dg.AssetCheckResult(
+                passed=True, description="Map has been properly generated"
+            )
+    except Exception as e:
+        context.log.error(
+            f"Error checking that the map has been properly generated: {e}"
+        )
+        return dg.AssetCheckResult(
+            passed=False,
+            description=f"Error checking that the map has been properly generated: {e}",
+        )
