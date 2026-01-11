@@ -1,0 +1,36 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# IDEs
+.vscode/
+.idea/
+
+# Data
+data/
+
+# Coverage
+.coverage
+.coverage.*
+
+# Ruff
+.ruff_cache/
+
+# pytest
+.pytest_cache/
+
+# Dagster
+.nux/
+.logs_queue/
+history/
+storage/
+logs/
+schedules/
+.telemetry/

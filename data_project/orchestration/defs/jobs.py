@@ -1,0 +1,14 @@
+import dagster as dg
+
+data_project_workflow = dg.define_asset_job(
+    name="data_project_workflow",
+    selection=[
+        "dg_download_data",
+        "dg_process_caract",
+        "dg_process_lieux",
+        "dg_process_vehicules",
+        "dg_process_usagers",
+        "dg_process_jointure",
+        "dg_generate_analytics",
+    ],
+)
