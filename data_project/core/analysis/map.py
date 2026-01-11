@@ -83,6 +83,10 @@ def generate_paris_map(df: pd.DataFrame = None, output_path: Path = None) -> Non
 
     if df is None:
         df = read_data(DATA_GOLD)
+    
+    if not isinstance(df, pd.DataFrame):
+        raise ValueError("df must be a pandas DataFrame")
+    
     generate_map(
         df=df, output_path=output_path, department_filter="75", color_by="gravite"
     )

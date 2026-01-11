@@ -9,7 +9,7 @@ def main():
     get_data()
     # Process data
     process_data()
-    generate_paris_map(PARIS_MAP_PATH)
+    generate_paris_map(output_path=PARIS_MAP_PATH)
 
 
 if __name__ == "__main__":
